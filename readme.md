@@ -14,3 +14,6 @@
 > para conseguir el valor del Authorization es necesario: registrar al usuario y luego loguearlo
 > > Header: Authorization=Token token_de_usuario
 
+
+### Documentación de las APIs
+> * https://www.getpostman.com/collections/ec268c9032e191257f3a
