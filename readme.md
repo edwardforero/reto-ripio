@@ -16,4 +16,4 @@
 
 
 ### Documentación de las APIs
-> * https://www.getpostman.com/collections/ec268c9032e191257f3a
+> * https://documenter.getpostman.com/view/6077666/TzeTKqCk
