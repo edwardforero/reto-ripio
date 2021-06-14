@@ -140,3 +140,5 @@ cython_debug/
 
 
 .DS_Store
+venv
+backend/test.py
