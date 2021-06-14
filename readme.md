@@ -9,8 +9,8 @@
 
 ### Acerca del funcionamiento del backend:
 > *   Para realizar las peticiones debes incluir el api key en la cabecera cuyo valor es "default-key"
-> *   Header: x-api-key=default-key
+>  Header: x-api-key=default-key
 > *   Tambien es necesario incluir el Authorization en las peticiones, excepto para las APIs de usuarios
 > para conseguir el valor del Authorization es necesario: registrar al usuario y luego loguearlo
-> *   Header: Authorization=Token token_de_usuario
+>  Header: Authorization=Token token_de_usuario
 
