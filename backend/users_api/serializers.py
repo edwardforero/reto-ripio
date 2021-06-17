@@ -13,6 +13,7 @@ class UserForeignSerializer(serializers.Serializer):
     last_name = serializers.CharField(
         min_length=3, 
         max_length=80)
+    is_superuser = serializers.BooleanField(default=False)
 
 
 class UserSerializer(serializers.Serializer):

@@ -11,7 +11,7 @@ class CoinUserSerializer(serializers.Serializer):
     coin = CoinSerializerForeign()
     user = UserForeignSerializer()
     amount = serializers.DecimalField(
-        min_value=0.1,
+        min_value=0.0001,
         max_digits=10, 
         decimal_places=4, 
         required=True)
@@ -24,7 +24,7 @@ class UserCoinSerializerCreate(serializers.Serializer):
     id_user_coin_movements = serializers.IntegerField(read_only=True)
     id_coin = serializers.IntegerField()
     amount = serializers.DecimalField(
-        min_value=0.1,
+        min_value=0.0001,
         max_digits=10, 
         decimal_places=4, 
         required=True)
@@ -45,12 +45,13 @@ class UserCoinMovementsSerializer(serializers.Serializer):
     id_user_coin_movements = serializers.IntegerField(read_only=True)
     coin = CoinSerializerForeign()
     user = UserForeignSerializer()
-    user_to = serializers.EmailField(
-        max_length=100, 
-        required=True)
+    user_to = UserForeignSerializer() 
+    #  serializers.EmailField(
+    #     max_length=100, 
+    #     required=True)
     detail_movement = serializers.CharField()
     amount = serializers.DecimalField(
-        min_value=0.1,
+        min_value=0.0001,
         max_digits=10, 
         decimal_places=4, 
         required=True)
@@ -64,9 +65,9 @@ class UserCoinMovementsSerializerCreate(serializers.Serializer):
     id_coin = serializers.IntegerField()
     email_to = serializers.EmailField(
         max_length=100, 
-        required=True)
+        required=False)
     amount = serializers.DecimalField(
-        min_value=0.1,
+        min_value=0.0001,
         max_digits=10, 
         decimal_places=4, 
         required=True)
@@ -86,4 +87,5 @@ class UserCoinMovementsSerializerCreate(serializers.Serializer):
         validated_data['user'] = validated_data.pop('id_user', None)
         validated_data['user_to'] = validated_data.pop('email_to', None)
         return UserCoinsMovements.objects.create(**validated_data)
+
 

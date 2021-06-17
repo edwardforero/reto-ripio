@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.forms.models import model_to_dict
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
@@ -66,10 +67,11 @@ class UserLoginApiView(APIView):
                 password=password)
             if user is not None:
                 token = Token.objects.get_or_create(user=user)
-                print(token[0].key)
+                serializer = UserForeignSerializer([user], many=True)                
                 return Response({ 
                     'message': 'usuario logueado correctamente',
-                    'token': token[0].key }, 
+                    'token': token[0].key,
+                    'user': serializer.data[0]}, 
                     status=200,
                 )
 

@@ -23,7 +23,13 @@ class UserCoinApiView(APIView):
         """ get all user coin relation """
         user = validate_token(request.headers.get('Authorization'))
         if user is not None:
-            queryset = UserCoin.objects.filter(user=user.id)
+            all = request.GET.get('all', None)
+            if all in [True, 'true', 'True'] and user.is_superuser is True:
+                queryset = UserCoin.objects.all()
+            
+            else:
+                queryset = UserCoin.objects.filter(user=user.id)
+
             serializer = CoinUserSerializer(queryset, many=True)
             return Response(serializer.data)
         else:
@@ -34,7 +40,7 @@ class UserCoinApiView(APIView):
             )
 
     def post(self, request):
-        """ create user coin relation"""
+        """ join user and coins """
         user = validate_token(request.headers.get('Authorization'))
         if user is None:
             msg = 'Faltan credenciales de autenticación.'
@@ -78,7 +84,7 @@ class UserCoinMovementsApiView(APIView):
     permission_classes = [CheckApiKeyAuth, Authorization]
 
     def get(self, request, format=None):
-        """ get all user coin relation """
+        """ get all user coin movements """
         user = validate_token(request.headers.get('Authorization'))
         if user is None:
             msg = 'Faltan credenciales de autenticación.'
@@ -99,7 +105,7 @@ class UserCoinMovementsApiView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        """ create user coin relation"""
+        """ create user coin movement"""
         user = validate_token(request.headers.get('Authorization'))
         if user is None:
             msg = 'Faltan credenciales de autenticación.'
@@ -123,18 +129,25 @@ class UserCoinMovementsApiView(APIView):
         id_coin = serializers_post.validated_data.get('id_coin')
         amount = serializers_post.validated_data.get('amount')
         try:
-            user_to = User.objects.get(email=email_to)
-            user_coin = UserCoin.objects.get(coin=id_coin, user=id_coin)
-            coin = user_coin.coin
+            # gift
+            if email_to is not None:
+                user_to = User.objects.get(email=email_to)
+                msg = 'Se han enviado {} {} a ' + email_to
+            # buy
+            else:
+                user_to = user
+                msg = "Se han recargado a tu cuenta {} {}"
+            coin = Coin.objects.get(id_coin=id_coin)
             serializers_post.save(
                 id_user=user, 
                 id_coin=coin, 
                 email_to=user_to)
             return Response(
-                {'message': 'Se han enviado {} {} a {}'.format(
+                {'message': msg.format(
                     amount, 
                     coin.coin_name, 
-                    email_to)}, 
+                    email_to)
+                }, 
                 status=200)
 
         except Exception as e:
@@ -142,12 +155,12 @@ class UserCoinMovementsApiView(APIView):
             print(msg)
             if 'User matching query does not exist.' in msg:
                 msg = 'El correo ' + email_to + ' no se encuentra registrado.'
-            if 'Coin matching query does not exist.' in msg:
-                msg = 'No cuentas con la moneda seleccionada.'
+            # if 'Coin matching query does not exist.' in msg:
+            #     msg = 'No cuentas con la moneda seleccionada.'
             if 'CHECK constraint failed: amount_non_negative' in msg:
                 msg = 'No cuentas con saldo suficiente.'
             if 'UNIQUE constraint failed: t_users_coins_movements.id_user, t_users_coins_movements.id_user_to, t_users_coins_movements.detail_movement, t_users_coins_movements.amount' in msg:
-                msg = 'Ya realizaste un movimiento con las mismas caracteristicas.'
+                msg = 'Ya realizaste ese movimiento'
 
             return Response(
                 {

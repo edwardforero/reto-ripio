@@ -23,6 +23,7 @@ class Authorization(BasePermission):
 
     def has_permission(self, request, view):
         authorization = request.headers.get('Authorization', '')
+        print(authorization)
         if 'Token' not in authorization:
             return False
         authorization = authorization.split()

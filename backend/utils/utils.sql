@@ -16,7 +16,7 @@ BEGIN
     SELECT
     NEW.id_coin,
     NEW.id_user,
-    (IFNULL(t1.amount, 0) + (IIF( NEW.id_user_to IS NOT NULL, -1, 1) * NEW.amount)) amount,
+    (IFNULL(t1.amount, 0) + (IIF( NEW.id_user_to IS NOT NULL AND NEW.id_user_to <> NEW.id_user, -1, 1) * NEW.amount)) amount,
     1 is_active,
     NEW.timestamp_created,
     NEW.timestamp_created
@@ -25,7 +25,7 @@ BEGIN
         AND t1.id_coin = NEW.id_coin
     ON CONFLICT(`id_coin`, `id_user`) DO UPDATE
     SET
-    amount = amount + (IIF( NEW.id_user_to IS NOT NULL, -1, 1) * NEW.amount),
+    amount = amount + (IIF( NEW.id_user_to IS NOT NULL AND NEW.id_user_to <> NEW.id_user, -1, 1) * NEW.amount),
     timestamp_modified = NEW.timestamp_created
     ;
 
@@ -36,7 +36,7 @@ DROP TRIGGER IF EXISTS tr_ai_t_users_coins_movements_2;
 CREATE TRIGGER tr_ai_t_users_coins_movements_2
     AFTER INSERT
    ON t_users_coins_movements
-   WHEN NEW.id_user_to IS NOT NULL
+   WHEN NEW.id_user_to IS NOT NULL AND NEW.id_user_to <> NEW.id_user 
 BEGIN
 
     INSERT INTO t_users_coins_movements (

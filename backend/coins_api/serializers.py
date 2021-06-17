@@ -8,10 +8,12 @@ class CoinSerializer(serializers.Serializer):
     coin_name = serializers.CharField(max_length=255, required=True)
     is_active = serializers.BooleanField(required=False)
     dolar_buys = serializers.DecimalField(
+        min_value=0.0001,
         max_digits=10, 
         decimal_places=4, 
         required=True)
     dolar_sale = serializers.DecimalField(
+        min_value=0.0001,
         max_digits=10, 
         decimal_places=4, 
         required=True)
@@ -22,6 +24,7 @@ class CoinSerializer(serializers.Serializer):
         """
             Create and return a new coin
         """
+        validated_data['coin_name'] = validated_data['coin_name'].upper()
         return Coin.objects.create(**validated_data)
 
 
@@ -30,10 +33,12 @@ class CoinSerializerForeign(serializers.Serializer):
     id_coin = serializers.IntegerField()
     coin_name = serializers.CharField(max_length=255, read_only=True)
     dolar_buys = serializers.DecimalField(
+        min_value=0.0001,
         max_digits=10, 
         decimal_places=4,
         read_only=True)
     dolar_sale = serializers.DecimalField(
+        min_value=0.0001,
         max_digits=10, 
         decimal_places=4,
         read_only=True)
